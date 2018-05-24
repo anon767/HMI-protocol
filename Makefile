@@ -21,14 +21,16 @@ canwrapper:  $(SRCDIR)/Infrastructure/CANWrapperImpl.o $(SRCDIR)/Infrastructure/
 applicationcontroller:  $(SRCDIR)/Domain/ApplicationController.o
 	$(CXX) -o $@ $^ $(LIBS)
 
-
+hmicontroller:  $(SRCDIR)/Domain/HMIController.o
+	$(CXX) -o $@ $^ $(LIBS)
 
 %.o: %.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 clean:
-	$(RM) $(SRCDIR)/*.o
-	$(RM) canwrapper
+	$(RM) $(SRCDIR)/Infrastructure/*.o
+	$(RM) $(SRCDIR)/Domain/*.o
+	$(RM) canwrapper applicationcontroller hmicontroller
 
 all: applicationcontroller hmicontroller
 

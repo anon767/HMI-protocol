@@ -4,7 +4,8 @@
 
 #ifndef HMI_PROTOCOL_CANWRAPPER_H
 #define HMI_PROTOCOL_CANWRAPPER_H
-
+#include <linux/can.h>
+#include <linux/can/bcm.h>
 const static int NFRAMES = 1;
 typedef struct  {
     struct bcm_msg_head msg_head;

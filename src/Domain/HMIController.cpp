@@ -3,7 +3,7 @@
 //
 
 #include "HMIController.h"
-#include "../Infrastructure/CANWrapperImpl.h
+#include "../Infrastructure/CANWrapperImpl.h"
 
 HMIController::HMIController() {}
 void HMIController::doWork() {
@@ -11,3 +11,4 @@ void HMIController::doWork() {
 
     }
 }
+main(){}

@@ -14,9 +14,6 @@
 #include <sys/socket.h>
 #include <sys/ioctl.h>
 
-#include <linux/can.h>
-#include <linux/can/bcm.h>
-
 #include "CANWrapperImpl.h"
 const static int MSGID = 0x0BC;
 const static int DELAY = 10000;

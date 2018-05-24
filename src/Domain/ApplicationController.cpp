@@ -3,7 +3,7 @@
 //
 
 #include "ApplicationController.h"
-#include "../Infrastructure/CANWrapperImpl.h
+#include "../Infrastructure/CANWrapperImpl.h"
 
 ApplicationController::ApplicationController() {}
 
@@ -13,4 +13,7 @@ void ApplicationController::doWork() {
     }
 }
 
+main(){
+
+}
 
