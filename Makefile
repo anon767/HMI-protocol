@@ -1,4 +1,4 @@
-TARGETS=canwrapper
+TARGETS=canwrapper applicationcontroller hmicontroller
 SRCDIR=src
 
 # Compiler setup
@@ -15,8 +15,12 @@ all: $(TARGETS)
 debug: CXXFLAGS+=-g
 debug: $(TARGETS)
 
-canwrapper:  $(SRCDIR)/CANWrapperImpl.o $(SRCDIR)/util.o
+canwrapper:  $(SRCDIR)/Infrastructure/CANWrapperImpl.o $(SRCDIR)/Infrastructure/util.o
 	$(CXX) -o $@ $^ $(LIBS)
+
+applicationcontroller:  $(SRCDIR)/Domain/ApplicationController.o
+	$(CXX) -o $@ $^ $(LIBS)
+
 
 
 %.o: %.cpp
@@ -26,7 +30,7 @@ clean:
 	$(RM) $(SRCDIR)/*.o
 	$(RM) canwrapper
 
-all: canwrapper
+all: applicationcontroller hmicontroller
 
 rebuild: clean all
 

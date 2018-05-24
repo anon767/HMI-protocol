@@ -18,22 +18,18 @@
 #include <linux/can/bcm.h>
 
 #include "CANWrapperImpl.h"
-
 const static int MSGID = 0x0BC;
 const static int DELAY = 10000;
-const static int NFRAMES = 1;
-typedef struct can_msg {
-    struct bcm_msg_head msg_head;
-    struct can_frame frame[NFRAMES];
-};
 
 
-CANWrapperImpl::CANWrapperImpl(char iface[]) {
-    this->socket = openSocket(iface);
+CANWrapperImpl::CANWrapperImpl(char *iface) {
+    this->iface = iface;
+    this->socketHandle = this->openSocket();
+
 }
 
 
-int CANWrapperImpl::openSocket(char iface[]) {
+int CANWrapperImpl::openSocket() {
     int flags;
     struct ifreq ifr;
     struct sockaddr_can addr;
@@ -44,7 +40,7 @@ int CANWrapperImpl::openSocket(char iface[]) {
         return errno;
     }
 
-    strncpy(ifr.ifr_name, iface, IFNAMSIZ);
+    strncpy(ifr.ifr_name, this->iface, IFNAMSIZ);
     if (ioctl(s, SIOCGIFINDEX, &ifr) < 0) {
         perror("ioctl");
         return errno;
@@ -71,8 +67,8 @@ int CANWrapperImpl::openSocket(char iface[]) {
     return s;
 }
 
-int CANWrapperImpl::close() {
-    if (close(this->socket) < 0) {
+int CANWrapperImpl::can_close() {
+    if (close(this->socketHandle) < 0) {
         perror("close");
         return errno;
     }
@@ -82,7 +78,7 @@ int CANWrapperImpl::close() {
 
 int CANWrapperImpl::can_write(can_msg message) {
     ssize_t nbytes;
-    nbytes = write(this->socket, &message, sizeof(message));
+    nbytes = write(this->socketHandle, &message, sizeof(message));
     if (nbytes < 0) {
         perror("write: TX_SEND");
     } else if (nbytes < (ssize_t)sizeof(message))
@@ -98,16 +94,17 @@ int CANWrapperImpl::can_write(can_msg message) {
 }
 
 can_msg CANWrapperImpl::can_read(int can_id) {
+
     can_msg msg;
     msg.msg_head.opcode = RX_SETUP;
     msg.msg_head.can_id = can_id;
     msg.msg_head.flags = 0;
     msg.msg_head.nframes = 0;
     while (1) {
-        if (write(socket, &msg, sizeof(msg)) < 0) {
+        if (write(this->socketHandle, &msg, sizeof(msg)) < 0) {
             perror("write: RX_SETUP");
         }
-        ssize_t nbytes = read(this->socket, &msg, sizeof(msg));
+        ssize_t nbytes = read(this->socketHandle, &msg, sizeof(msg));
         if (nbytes < 0) {
             if (errno != EAGAIN) {
                 perror(": read");
@@ -125,38 +122,40 @@ can_msg CANWrapperImpl::can_read(int can_id) {
 }
 
 
-int main(int argc, char **argv) {
+int main() {
     char iface[] = "vcan0";
-    CANWrapperImpl can = new CANWrapperImpl(iface);
+    printf("interface: %s\n", iface);
+
+    CANWrapperImpl can{iface};
 
 
 
     /* Main loop */
-    while (1) {
-        can_msg msg = can.can_read(0x123);
-        struct can_frame *const frame = msg.frame;
-        unsigned char *const data = frame->data;
-        const unsigned int dlc = frame->can_dlc;
-        unsigned int i;
+    //while (1) {
+    can_msg msg = can.can_read(0x123);
+    struct can_frame *const frame = msg.frame;
+    unsigned char *const data = frame->data;
+    const unsigned int dlc = frame->can_dlc;
+    unsigned int i;
 
-        /* Print the received CAN frame */
-        printf("RX:  ");
-        print_can_frame(frame);
-        printf("\n");
+    /* Print the received CAN frame */
+    printf("RX:  ");
+    print_can_frame(frame);
+    printf("\n");
 
-        /* Modify the CAN frame to use our message ID */
-        frame->can_id = MSGID;
+    /* Modify the CAN frame to use our message ID */
+    frame->can_id = MSGID;
 
-        /* Increment the value of each byte in the CAN frame */
-        for (i = 0; i < dlc; ++i) {
-            data[i] += 1;
-        }
-
-        /* Set a TX message for sending this frame once */
-        msg.msg_head.opcode = TX_SEND;
-        msg.msg_head.can_id = 0;
-        msg.msg_head.flags = 0;
-        msg.msg_head.nframes = 1;
-        can.can_write(msg);
+    /* Increment the value of each byte in the CAN frame */
+    for (i = 0; i < dlc; ++i) {
+        data[i] += 1;
     }
+
+    /* Set a TX message for sending this frame once */
+    msg.msg_head.opcode = TX_SEND;
+    msg.msg_head.can_id = 0;
+    msg.msg_head.flags = 0;
+    msg.msg_head.nframes = 1;
+    can.can_write(msg);
+    //}
 }
