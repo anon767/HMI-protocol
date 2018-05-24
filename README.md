@@ -4,4 +4,8 @@
 
 * make clean
 
-* make
+* make canwrapper
+
+* make applicationcontroller
+
+* make hmicontroller
