@@ -5,9 +5,9 @@
 #ifndef HMI_PROTOCOL_HMICONTROLLER_H
 #define HMI_PROTOCOL_HMICONTROLLER_H
 
-class HMIController{
+class DisplayController{
 public:
-    HMIController(void);
+    DisplayController(void);
     void doWork();
 };
 

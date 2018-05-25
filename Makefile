@@ -1,4 +1,4 @@
-TARGETS=canwrapper applicationcontroller hmicontroller
+TARGETS=reversegearcontroller displaycontroller
 SRCDIR=src
 
 # Compiler setup
@@ -15,13 +15,11 @@ all: $(TARGETS)
 debug: CXXFLAGS+=-g
 debug: $(TARGETS)
 
-canwrapper:  $(SRCDIR)/Infrastructure/CANWrapperImpl.o $(SRCDIR)/Infrastructure/util.o
+
+reversegearcontroller: $(SRCDIR)/Infrastructure/util.o $(SRCDIR)/Infrastructure/CANWrapperImpl.o $(SRCDIR)/Domain/ReverseGearController.o
 	$(CXX) -o $@ $^ $(LIBS)
 
-applicationcontroller:  $(SRCDIR)/Domain/ApplicationController.o
-	$(CXX) -o $@ $^ $(LIBS)
-
-hmicontroller:  $(SRCDIR)/Domain/HMIController.o
+displaycontroller:  $(SRCDIR)/Infrastructure/util.o $(SRCDIR)/Infrastructure/CANWrapperImpl.o $(SRCDIR)/Domain/DisplayController.o
 	$(CXX) -o $@ $^ $(LIBS)
 
 %.o: %.cpp
@@ -30,9 +28,9 @@ hmicontroller:  $(SRCDIR)/Domain/HMIController.o
 clean:
 	$(RM) $(SRCDIR)/Infrastructure/*.o
 	$(RM) $(SRCDIR)/Domain/*.o
-	$(RM) canwrapper applicationcontroller hmicontroller
+	$(RM) reversegearcontroller displaycontroller
 
-all: applicationcontroller hmicontroller
+all: reversegearcontroller displaycontroller
 
 rebuild: clean all
 

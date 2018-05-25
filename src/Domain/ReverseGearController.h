@@ -4,9 +4,9 @@
 
 #ifndef HMI_PROTOCOL_APPLICATIONCONTROLLER_H
 #define HMI_PROTOCOL_APPLICATIONCONTROLLER_H
-class ApplicationController{
+class ReverseGearController{
 public:
-    ApplicationController(void);
+    ReverseGearController(void);
     void doWork();
 };
 #endif //HMI_PROTOCOL_APPLICATIONCONTROLLER_H

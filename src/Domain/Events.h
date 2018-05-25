@@ -4,6 +4,6 @@
 
 #ifndef HMI_PROTOCOL_EVENTS_H
 #define HMI_PROTOCOL_EVENTS_H
-const static int NAVIGATION_EVENT = 0;
+const static int REVERSE_GEAR_TRIGGERED = 0x000;
 
 #endif //HMI_PROTOCOL_EVENTS_H
